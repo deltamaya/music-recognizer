@@ -1,7 +1,8 @@
 package main
 
-import "fmt"
+import "delm.dev/music-recognizer/models"
 
 func main() {
-	fmt.Println("hello world")
+	models.ReadWavInfo("./assets/saul.wav")
+
 }
