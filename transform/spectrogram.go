@@ -73,11 +73,12 @@ func Downsample(input []float64, sourceSampleRate, targetSampleRate int) ([]floa
 		if end > len(input) {
 			end = len(input)
 		}
-		sum := 0.
+		sum := 0.0
 		for j := i; j < end; j++ {
 			sum += input[j]
 		}
-		avg := sum / float64(end-i)
+		cnt := end - i
+		avg := sum / float64(cnt)
 		resampled = append(resampled, avg)
 	}
 	return resampled, nil

@@ -5,7 +5,6 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"errors"
-	"log"
 	"os"
 	"os/exec"
 )
@@ -31,7 +30,7 @@ type WavHeader struct {
 	DataSize   uint32
 }
 
-type WavInfo struct {
+type Wav struct {
 	Channels   int
 	SampleRate int
 	// audio duartion in seconds
@@ -42,7 +41,7 @@ type WavInfo struct {
 const WavHeaderLength = 44
 
 // extracts metadata from the target file, assuming this path points to a WAV formatted sound file
-func ReadWavInfo(filename string) (*WavInfo, error) {
+func ReadWav(filename string) (*Wav, error) {
 	data, err := os.ReadFile(filename)
 	if err != nil {
 		return nil, err
@@ -58,14 +57,13 @@ func ReadWavInfo(filename string) (*WavInfo, error) {
 	if string(header.FileTypeBlocID[:]) != "RIFF" || string(header.FileFormatID[:]) != "WAVE" || header.AudioFormat != 1 {
 		return nil, errors.New("invalid wav header")
 	}
-	info := &WavInfo{
+	info := &Wav{
 		Channels:   int(header.NumChannels),
 		SampleRate: int(header.Frequency),
 		Data:       data[WavHeaderLength:],
 	}
 	if header.BitsPerSample == 16 {
 		info.Duration = float64(len(info.Data)) / float64(uint32(header.NumChannels)*2*header.Frequency)
-		log.Printf("len data: %f\n", info.Duration)
 	} else {
 		return nil, errors.New("unsupported bits per sample format")
 	}
